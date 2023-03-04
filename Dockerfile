@@ -1,4 +1,4 @@
-FROM instrumentisto/flutter:latest
+FROM instrumentisto/flutter:latest as build
 
 WORKDIR /app
 
@@ -7,6 +7,10 @@ COPY . .
 RUN flutter doctor -v
 RUN flutter build web
 
-WORKDIR /app/build/web
+FROM python:3
+
+WORKDIR /app
+
+COPY --from=build /app/build/web .
 
 CMD python3 -m http.server $PORT
